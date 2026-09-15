@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Stella Yathe</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  body { background: var(--paper-raised); }
+  .admin-shell { max-width: 760px; margin: 0 auto; padding: 60px 24px 100px; }
+  .login-shell { max-width: 360px; margin: 120px auto; padding: 0 24px; }
+  .card { background: var(--white); border: 1px solid var(--line); padding: 28px; margin-bottom: 20px; }
+  .item-row { display:flex; justify-content:space-between; align-items:center; padding:16px 0; border-bottom:1px solid var(--line); gap: 12px; }
+  .item-row .actions { display:flex; gap: 10px; flex-shrink:0; }
+  .item-row .actions button { background:none; border:none; font-family: var(--mono); font-size:0.76rem; color: var(--slate); cursor:pointer; padding:4px 0; }
+  .item-row .actions button:hover { color: var(--ink); }
+  .tabs { display:flex; gap: 24px; border-bottom: 1px solid var(--line); margin-bottom: 30px; }
+  .tab-btn { background:none; border:none; padding: 10px 0; font-family: var(--sans); font-weight:500; color: var(--slate); cursor:pointer; border-bottom: 2px solid transparent; }
+  .tab-btn.active { color: var(--ink); border-color: var(--accent); }
+  .status-msg { font-family: var(--mono); font-size: 0.78rem; margin-top: 10px; }
+  .status-msg.ok { color: #3a6b4a; }
+  .status-msg.err { color: #a13a3a; }
+  .checkbox-row { display:flex; align-items:center; gap:10px; }
+  .checkbox-row input { width:auto; }
+  .checkbox-row label { margin:0; }
+</style>
+</head>
+<body>
+
+<div id="login-view" class="login-shell">
+  <p class="eyebrow">ADMIN</p>
+  <h2 style="margin-top:14px;">Connexion</h2>
+  <div class="field" style="margin-top:24px;">
+    <label>Mot de passe</label>
+    <input type="password" id="login-password" autofocus>
+  </div>
+  <button class="btn" id="login-btn" style="width:100%;">Se connecter</button>
+  <p id="login-status" class="status-msg"></p>
+</div>
+
+<div id="admin-view" class="admin-shell hidden">
+  <div class="space-between">
+    <h2>Panel admin</h2>
+    <button class="btn btn-ghost" id="logout-btn">Déconnexion</button>
+  </div>
+
+  <div class="tabs" style="margin-top:34px;">
+    <button class="tab-btn active" data-tab="travaux">Travaux</button>
+    <button class="tab-btn" data-tab="biblio">Bibliothèque</button>
+  </div>
+
+  <!-- TRAVAUX TAB -->
+  <div id="tab-travaux">
+    <div class="card">
+      <h3 id="travaux-form-title">Nouveau travail</h3>
+      <input type="hidden" id="travaux-id">
+      <div class="field" style="margin-top:18px;">
+        <label>Titre</label>
+        <input type="text" id="travaux-title">
+      </div>
+      <div class="row">
+        <div class="field" style="flex:1;">
+          <label>Catégorie</label>
+          <select id="travaux-category">
+            <option value="concept">Concept</option>
+            <option value="analyse">Analyse d'entreprise</option>
+            <option value="rapport">Rapport annuel</option>
+            <option value="transaction">Transaction</option>
+          </select>
+        </div>
+        <div class="field" style="flex:1;">
+          <label>Date</label>
+          <input type="date" id="travaux-date">
+        </div>
+      </div>
+      <div class="field">
+        <label>Extrait (1-2 phrases, affiché dans les listes)</label>
+        <input type="text" id="travaux-excerpt">
+      </div>
+      <div class="field">
+        <label>Tags (séparés par des virgules)</label>
+        <input type="text" id="travaux-tags" placeholder="LVMH, luxe, valorisation">
+      </div>
+      <div class="field">
+        <label>Contenu — Markdown léger : ## titre, **gras**, *italique*, listes avec -, citations avec ></label>
+        <textarea id="travaux-content" style="min-height:280px;"></textarea>
+      </div>
+      <div class="checkbox-row field">
+        <input type="checkbox" id="travaux-published" checked>
+        <label style="margin:0;">Publié (visible sur le site)</label>
+      </div>
+      <div class="row">
+        <button class="btn" id="travaux-save-btn">Publier</button>
+        <button class="btn btn-ghost" id="travaux-cancel-btn">Annuler</button>
+      </div>
+      <p id="travaux-status" class="status-msg"></p>
+    </div>
+
+    <div class="card">
+      <h3>Travaux existants</h3>
+      <div id="travaux-list-admin" style="margin-top:14px;">
+        <p class="skeleton">Chargement…</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- BIBLIO TAB -->
+  <div id="tab-biblio" class="hidden">
+    <div class="card">
+      <h3 id="biblio-form-title">Nouvelle ressource</h3>
+      <input type="hidden" id="biblio-id">
+      <div class="row">
+        <div class="field" style="flex:1;">
+          <label>Titre</label>
+          <input type="text" id="biblio-title">
+        </div>
+        <div class="field" style="flex:1;">
+          <label>Auteur</label>
+          <input type="text" id="biblio-author">
+        </div>
+      </div>
+      <div class="row">
+        <div class="field" style="flex:1;">
+          <label>Avancement</label>
+          <input type="text" id="biblio-progress" placeholder="ex : chapitre 4/12, terminé...">
+        </div>
+        <div class="field" style="flex:1;">
+          <label>Ordre d'affichage (nombre, plus petit = plus haut)</label>
+          <input type="number" id="biblio-order" value="0">
+        </div>
+      </div>
+      <div class="field">
+        <label>Notes / concepts retenus — Markdown léger</label>
+        <textarea id="biblio-notes" style="min-height:180px;"></textarea>
+      </div>
+      <div class="checkbox-row field">
+        <input type="checkbox" id="biblio-published" checked>
+        <label style="margin:0;">Publié (visible sur le site)</label>
+      </div>
+      <div class="row">
+        <button class="btn" id="biblio-save-btn">Publier</button>
+        <button class="btn btn-ghost" id="biblio-cancel-btn">Annuler</button>
+      </div>
+      <p id="biblio-status" class="status-msg"></p>
+    </div>
+
+    <div class="card">
+      <h3>Ressources existantes</h3>
+      <div id="biblio-list-admin" style="margin-top:14px;">
+        <p class="skeleton">Chargement…</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="js/firebase-init.js"></script>
+<script src="js/data.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

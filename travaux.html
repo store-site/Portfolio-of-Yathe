@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Travaux — Stella Yathe</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="travaux.html">
+
+<header id="site-header" class="site-header"></header>
+
+<main>
+  <section style="padding-bottom: 32px;">
+    <div class="wrap">
+      <p class="eyebrow">TRAVAUX</p>
+      <h1 style="margin-top:14px;">Analyses, concepts et études de transactions</h1>
+      <p style="margin-top:18px; color: var(--slate); max-width: 60ch;">
+        Concepts de finance d'entreprise, analyses d'entreprises cotées, lectures de rapports annuels et études de cas M&A — publiés au fil de ma progression.
+      </p>
+
+      <div class="filters" style="margin-top:34px;">
+        <button class="filter-btn active" data-cat="">Tout</button>
+        <button class="filter-btn" data-cat="concept">Concepts</button>
+        <button class="filter-btn" data-cat="analyse">Analyses d'entreprises</button>
+        <button class="filter-btn" data-cat="rapport">Rapports annuels</button>
+        <button class="filter-btn" data-cat="transaction">Transactions</button>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top: 0;">
+    <div class="wrap">
+      <div class="card-grid" id="travaux-list">
+        <p class="skeleton" style="padding:30px;">Chargement…</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer id="site-footer" class="site-footer"></footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="js/firebase-init.js"></script>
+<script src="js/data.js"></script>
+<script src="js/render.js"></script>
+<script>
+let ALL_ITEMS = [];
+
+function renderList(items) {
+  const list = document.getElementById("travaux-list");
+  if (items.length === 0) {
+    list.innerHTML = '<p class="empty-state" style="padding:30px;">Aucun travail dans cette catégorie pour le moment.</p>';
+    return;
+  }
+  list.innerHTML = items.map(item => `
+    <a class="work-card" href="travail.html?id=${item.id}">
+      <div class="space-between">
+        <span class="tag">${CATEGORIES[item.category] || item.category}</span>
+        <span class="meta">${formatDate(item.date)}</span>
+      </div>
+      <h3>${item.title}</h3>
+      <p class="work-excerpt">${item.excerpt || ""}</p>
+      <span class="read-link">Lire l'article <span class="arrow">→</span></span>
+    </a>
+  `).join("");
+}
+
+async function init() {
+  const list = document.getElementById("travaux-list");
+  try {
+    ALL_ITEMS = await getTravaux();
+    renderList(ALL_ITEMS);
+  } catch (e) {
+    list.innerHTML = '<li class="empty-state">Impossible de charger les travaux pour le moment.</li>';
+    console.error(e);
+  }
+
+  document.querySelectorAll(".filter-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      const cat = btn.dataset.cat;
+      renderList(cat ? ALL_ITEMS.filter(i => i.category === cat) : ALL_ITEMS);
+    });
+  });
+}
+init();
+</script>
+
+</body>
+</html>

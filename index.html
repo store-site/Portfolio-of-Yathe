@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stella Yathe — Corporate Finance</title>
+<meta name="description" content="Portfolio de Stella Yathe, étudiante en Corporate Finance à ICN Business School — analyses d'entreprises, concepts de finance, veille M&A et Private Equity.">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="index.html">
+
+<header id="site-header" class="site-header"></header>
+
+<main>
+
+  <section style="padding-top:88px; padding-bottom:88px;">
+    <div class="wrap">
+      <p class="eyebrow">ÉTUDIANTE — PROGRAMME GRANDE ÉCOLE, ICN BUSINESS SCHOOL · SPÉCIALISATION CORPORATE FINANCE</p>
+      <h1 style="margin-top: 18px; max-width: 14ch;">Stella Yathe</h1>
+      <p class="lede" style="margin-top: 24px; max-width: 42ch;">
+        Je construis, analyse par analyse, une expertise en finance d'entreprise et en finance transactionnelle — en vue de l'audit, des transaction services et, à terme, du M&A et du private equity.
+      </p>
+      <div class="row" style="margin-top: 34px;">
+        <a href="travaux.html" class="btn">Voir mes travaux</a>
+        <a href="cv.html" class="btn btn-ghost">Consulter mon CV</a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap" style="display:grid; grid-template-columns: 1.3fr 1fr; gap: 56px;">
+      <div>
+        <p class="eyebrow">TRAJECTOIRE</p>
+        <h2 style="margin-top:14px;">Vers l'audit, les transaction services et le corporate finance</h2>
+        <p style="margin-top:22px; color: var(--slate);">
+          En alternance en contrôle de gestion depuis septembre 2025, je ne compte pas m'y arrêter. Mon objectif est de rejoindre un cabinet d'audit ou une équipe transaction services, avant de m'orienter vers le M&A ou le private equity. Ce site documente ce chemin : ce que j'apprends, ce que j'analyse, et à quel rythme je progresse.
+        </p>
+        <p style="margin-top:16px; color: var(--slate);">
+          Prochaine étape académique visée&nbsp;: le master Dauphine&nbsp;225, Finance d'Entreprise et Ingénierie Financière.
+        </p>
+      </div>
+      <div style="border-left: 1px solid var(--line); padding-left: 32px;">
+        <p class="eyebrow">EN CE MOMENT</p>
+        <ul style="list-style:none; padding:0; margin: 18px 0 0; color: var(--slate); font-size: 0.95rem; display:flex; flex-direction:column; gap:10px;">
+          <li>— Lecture du Vernimmen</li>
+          <li>— Analyse de bilan et lecture des états financiers</li>
+          <li>— Analyse de rapports annuels</li>
+          <li>— Comptabilité financière</li>
+          <li>— Bases de la valorisation</li>
+          <li>— Fondamentaux M&A et private equity</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="space-between">
+        <div>
+          <p class="eyebrow">TRAVAUX RÉCENTS</p>
+          <h2 style="margin-top:14px;">Dernières publications</h2>
+        </div>
+        <a href="travaux.html" class="btn btn-ghost">Tout voir</a>
+      </div>
+
+      <div class="card-grid" id="recent-list" style="margin-top:36px;">
+        <p class="skeleton" style="padding:30px;">Chargement…</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer id="site-footer" class="site-footer"></footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="js/firebase-init.js"></script>
+<script src="js/data.js"></script>
+<script src="js/render.js"></script>
+<script>
+async function loadRecent() {
+  const list = document.getElementById("recent-list");
+  try {
+    const items = (await getTravaux()).slice(0, 3);
+    if (items.length === 0) {
+      list.innerHTML = '<p class="empty-state" style="padding:30px;">Aucun travail publié pour le moment.</p>';
+      return;
+    }
+    list.innerHTML = items.map(item => `
+      <a class="work-card" href="travail.html?id=${item.id}">
+        <div class="space-between">
+          <span class="tag">${CATEGORIES[item.category] || item.category}</span>
+          <span class="meta">${formatDate(item.date)}</span>
+        </div>
+        <h3>${item.title}</h3>
+        <p class="work-excerpt">${item.excerpt || ""}</p>
+        <span class="read-link">Lire l'article <span class="arrow">→</span></span>
+      </a>
+    `).join("");
+  } catch (e) {
+    list.innerHTML = '<p class="empty-state" style="padding:30px;">Impossible de charger les travaux pour le moment.</p>';
+    console.error(e);
+  }
+}
+loadRecent();
+</script>
+
+</body>
+</html>

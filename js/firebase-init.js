@@ -3,17 +3,15 @@
    Remplace les valeurs ci-dessous par la config de TON projet
    Firebase (Console Firebase > Paramètres du projet > Tes apps
    > SDK setup and configuration > Config).
-   C'est la même logique que pour le site Gency Store : cette
-   config est publique par design, ce n'est pas un secret.
    ============================================================ */
 
 const firebaseConfig = {
-  apiKey: "REMPLACE_MOI",
-  authDomain: "REMPLACE_MOI.firebaseapp.com",
-  projectId: "REMPLACE_MOI",
-  storageBucket: "REMPLACE_MOI.appspot.com",
-  messagingSenderId: "REMPLACE_MOI",
-  appId: "REMPLACE_MOI"
+  apiKey: "AIzaSyAOBcdCdNAaPbjK3AryLhkUjORsH3Z0FA0",
+  authDomain: "mon-portfolio-finance.firebaseapp.com",
+  projectId: "mon-portfolio-finance",
+  storageBucket: "mon-portfolio-finance.firebasestorage.app",
+  messagingSenderId: "816253516121",
+  appId: "1:816253516121:web:18414e6af1e70ae10e7448"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -23,4 +21,4 @@ const auth = firebase.auth();
 
 /* Email autorisé à se connecter au panel admin.
    Remplace par ton adresse. */
-const ADMIN_EMAIL = "REMPLACE_MOI@gmail.com";
+const ADMIN_EMAIL = "stellayathe@gmail.com";
